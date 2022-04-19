@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% set active_page = "Stock" %}
+
+{% block title %}
+Stock
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" style="padding-right: 5px;padding-left: 5px;">
+    <h3 class="text-dark mb-4">Stock</h3>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">New Stock</p>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="/stock/add_stock">
+                {% include 'flash.html' %}
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="username"><strong>Name :</strong></label><input name="StockName" class="form-control" type="text" required></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Price (RM):</strong></label><input name="StockPrice" class="form-control" type="number" inputmode="decimal" step="0.01" required></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Stock Amount :</strong></label><input name="StockAmount" class="form-control" type="number" pattern="\d*" required></div>
+                    </div>
+                </div>
+                <div class="text-end mb-3"><button class="btn btn-primary" type="submit">Save</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Stock Info</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock in all_stock %}
+                        <tr>
+                            <td class="text-center"><a href="" data-bs-toggle="modal" data-bs-target="#modal-1" onclick="updateModal(this)" name = "{{stock.StockID}}"><i class="fa fa-remove"></i></a></td>
+                            <td>{{stock.StockName}}</td>
+                            <td>RM {{stock.StockPrice}}</td>
+                            <td>{{stock.StockAmount}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div role="dialog" tabindex="-1" class="modal fade" id="modal-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Stock</h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/stock/edit_stock" method="POST">
+                <div class="modal-body">
+                    
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3"><label class="form-label" for="username"><strong>Stock ID :</strong></label><input id="modal_StockID" name="modal_StockID" type="text" class="form-control" readonly/></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3"><label class="form-label" for="username"><strong>Name :</strong></label><input id="modal_StockName" name='modal_StockName' class="form-control" type="text" required></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3"><label class="form-label" for="first_name"><strong>Price (RM):</strong></label><input id="modal_StockPrice" name="modal_StockPrice" class="form-control" type="number" inputmode="decimal" step="0.01" required></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3"><label class="form-label" for="first_name"><strong>Stock Amount :</strong></label><input id="modal_StockAmount" name="modal_StockAmount" class="form-control" type="number" pattern="\d*" required></div>
+                            </div>
+                        </div>
+                </div>            
+                <div class="modal-footer"><button class="btn btn-danger" type="submit" name="modal_submit" value='delete'>Delete</button><button class="btn btn-primary" type="submit" name="modal_submit" value="save">Save</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function updateModal(caller) {
+
+        var stock_id = caller.name;        
+        var row = caller.parentElement.parentElement;
+        
+        var stock_name = row.children[1].innerText;
+        var stock_price = row.children[2].innerText;
+        stock_price = stock_price.substr(3)
+        var stock_amount = row.children[3].innerText;
+
+        document.getElementById("modal_StockID").value = stock_id;
+        document.getElementById("modal_StockName").value = stock_name;
+        document.getElementById("modal_StockPrice").value = stock_price;
+        document.getElementById("modal_StockAmount").value = stock_amount;
+    }
+    </script>
+{% endblock %}

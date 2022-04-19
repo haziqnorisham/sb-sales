@@ -1,0 +1,119 @@
+{% extends "hidden_base.html" %}
+
+{% set active_page = "Summary" %}
+
+{% block title %}
+Summary
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="padding-right: 5px;padding-left: 5px;">
+    <h3 class="text-dark mb-4">Summary</h3>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Filter</p>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="/hidden_summary">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="username"><strong>From :&nbsp;</strong></label><input class="form-control" type="date" name="from_date" value="{{from_date}}" ></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>To :&nbsp;</strong></label><input class="form-control" type="date" name="to_date" value="{{to_date}}" ></div>
+                    </div>
+                </div>
+                <div class="text-end mb-3"><button class="btn btn-primary" type="submit" >Generate</button></div>
+            </form>
+        </div>
+    </div>    
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Order</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-2" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Customer</th>
+                            <th>Time</th>
+                            <th>Items</th>
+                            <th>Total</th>                            
+                            <th>Location</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in order_list %}
+                        <tr>
+                            {% if order.order_status == 0 %}
+                            <td><a href="/hidden_order_details?order_id={{order.order_id}}" class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                            {% else %}
+                            <td><a href="/hidden_order_details?order_id={{order.order_id}}" class="btn btn-success btn-circle" role="button"><i class="fas fa-check text-white"></i></a></td>
+                            {% endif %}
+
+                            <td>{{order.customer_name}} {{order.customer_phone}}</td>
+                            
+                            <td>{{order.order_datetime[11:16]}}</td>
+                            
+                            <td>{{order.ordered_items[:-2]}}</td>
+
+                            <td>RM {{order.total_amount}}</td>                            
+                            
+                            {% if order.delivery_address == '' %}
+                            <td>SC</td>
+                            {% else %}
+                            <td><a href="https://www.waze.com/ul?q={{(order.delivery_address).replace(" ", "+")}}">{{order.delivery_address}}</a></td>
+                            {% endif %}
+
+                            {% if order.payment_type == 0 %}
+                            <td>Cash</td>
+                            {% elif order.payment_type == 1 %}
+                            <td>Transfer</td>
+                            {% else %}
+                            <td>-</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Ordered Items</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-3" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ordered_items in ordered_item_range %}
+                        <tr>
+                            <td>{{ordered_items.stock_name}}</td>
+                            <td>{{ordered_items.stock_total_amount}}</td>                            
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}            

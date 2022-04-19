@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% set active_page = "Summary" %}
+
+{% block title %}
+Summary
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="padding-right: 5px;padding-left: 5px;">
+    <h3 class="text-dark mb-4">Summary</h3>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Order Calendar</p>
+        </div>
+        <div class="card-body">            
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3"><div class="container">
+
+                        <div class="calendar">
+                      
+                          <header>
+                      
+                            <h2>September</h2>
+                      
+                            <a class="btn-prev fontawesome-angle-left" href="#"></a>
+                            <a class="btn-next fontawesome-angle-right" href="#"></a>
+                      
+                          </header>
+                      
+                          <table>
+                      
+                            <thead>
+                      
+                              <tr>
+                      
+                                <td>Mo</td>
+                                <td>Tu</td>
+                                <td>We</td>
+                                <td>Th</td>
+                                <td>Fr</td>
+                                <td>Sa</td>
+                                <td>Su</td>
+                      
+                              </tr>
+                      
+                            </thead>
+                      
+                            <tbody>
+                      
+                              <tr>
+                                <td class="prev-month">26</td>
+                                <td class="prev-month">27</td>
+                                <td class="prev-month">28</td>
+                                <td class="prev-month">29</td>
+                                <td class="prev-month">30</td>
+                                <td class="prev-month">31</td>
+                                <td>1</td>
+                              </tr>
+                              <tr>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                                <td>6</td>
+                                <td>7</td>
+                                <td>8</td>
+                              </tr>
+                              <tr>
+                                <td>9</td>
+                                <td class="event">10</td>
+                                <td>11</td>
+                                <td>12</td>
+                                <td>13</td>
+                                <td>14</td>
+                                <td>15</td>
+                              </tr>
+                              <tr>
+                                <td>16</td>
+                                <td>17</td>
+                                <td>18</td>
+                                <td>19</td>
+                                <td>20</td>
+                                <td class="event">21</td>
+                                <td>22</td>
+                              </tr>
+                      
+                              <tr>
+                                <td class="current-day event">23</td>
+                                <td>24</td>
+                                <td>25</td>
+                                <td>26</td>
+                                <td>27</td>
+                                <td>28</td>
+                                <td>29</td>
+                              </tr>
+                              <tr>
+                                <td>30</td>
+                                <td class="next-month">1</td>
+                                <td class="next-month">2</td>
+                                <td class="next-month">3</td>
+                                <td class="next-month">4</td>
+                                <td class="next-month">5</td>
+                                <td class="next-month">6</td>
+                              </tr>
+                      
+                            </tbody>
+                      
+                          </table>
+                      
+                        </div> <!-- end calendar -->
+                      
+                      </div> <!-- end container --></div>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Filter</p>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="/summary">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="username"><strong>From :&nbsp;</strong></label><input class="form-control" type="date" name="from_date" value="{{from_date}}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>To :&nbsp;</strong></label><input class="form-control" type="date" name="to_date" value="{{to_date}}"></div>
+                    </div>
+                </div>
+                <div class="text-end mb-3"><button class="btn btn-primary" type="submit">Generate</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Order</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-2" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Customer</th>
+                            <th>Time</th>
+                            <th>Items</th>
+                            <th>Total</th>                            
+                            <th>Location</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in order_list %}
+                        <tr>
+                            {% if order.order_status == 0 %}
+                            <td><a href="/order_details?order_id={{order.order_id}}" class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                            {% else %}
+                            <td><a href="/order_details?order_id={{order.order_id}}" class="btn btn-success btn-circle" role="button"><i class="fas fa-check text-white"></i></a></td>
+                            {% endif %}
+
+                            <td>{{order.customer_name}} {{order.customer_phone}}</td>
+                            
+                            <td>{{order.order_datetime[11:16]}}</td>
+                            
+                            <td>{{order.ordered_items[:-2]}}</td>
+
+                            <td>RM {{order.total_amount}}</td>                            
+                            
+                            {% if order.delivery_address == '' %}
+                            <td>SC</td>
+                            {% else %}
+                            <td><a href="https://www.waze.com/ul?q={{(order.delivery_address).replace(" ", "+")}}">{{order.delivery_address}}</a></td>
+                            {% endif %}
+
+                            {% if order.payment_type == 0 %}
+                            <td>Cash</td>
+                            {% elif order.payment_type == 1 %}
+                            <td>Transfer</td>
+                            {% else %}
+                            <td>-</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Ordered Items</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-3" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ordered_items in ordered_item_range %}
+                        <tr>
+                            <td>{{ordered_items.stock_name}}</td>
+                            <td>{{ordered_items.stock_total_amount}}</td>                            
+                        </tr>
+                        {% endfor %}  
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Stock</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-3" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stock_list in stock_list_range %}
+                        <tr>
+                            <td>{{stock_list.stock_name}}</td>
+                            <td>{{stock_list.stock_total_amount}}</td>
+                            <td>RM {{stock_list.stock_total_price}}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td>Delivery</td>
+                            <td>-</td>
+                            <td>RM {{total_delivery}}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Payment</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cash</td>
+                            <td>RM {{total_price_cash}}</td>
+                        </tr>
+                        <tr>
+                            <td>Transfer</td>
+                            <td>RM {{total_price_transfer}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td><strong>RM {{total_price_overall}}</strong></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}            

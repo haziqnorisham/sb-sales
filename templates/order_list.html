@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Table - sb-sales</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
+            <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                    <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-laugh-wink"></i></div>
+                    <div class="sidebar-brand-text mx-3"><span>sb-sales</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">
+                <ul class="navbar-nav text-light" id="accordionSidebar">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="summary.html"><i class="fa fa-bar-chart"></i><span>Summary</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="new_order.html"><i class="fas fa-table"></i><span>New Order</span></a></li>
+                    <li class="nav-item"><a class="nav-link active" href="order_list.html"><i class="fas fa-user-circle"></i><span>Order List</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="customer.html"><i class="fas fa-user"></i><span>Customer</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="stock.html"><i class="fa fa-th"></i><span>Stock</span></a></li>
+                </ul>
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button></div>
+                </nav>
+                <div class="container-fluid" style="padding-right: 5px;padding-left: 5px;">
+                    <h3 class="text-dark mb-4">Order List</h3>
+                    <div class="card shadow mb-3">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 fw-bold">Today's Order</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive table mt-2" id="dataTable-2" role="grid" aria-describedby="dataTable_info">
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a class="btn btn-success btn-circle" role="button"><i class="fas fa-check text-white"></i></a></td>
+                                            <td>Ali 0193490256</td>
+                                            <td>RM 55.20</td>
+                                            <td>Cash</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a class="btn btn-success btn-circle" role="button"><i class="fas fa-check text-white"></i></a></td>
+                                            <td>Abu 0192988046</td>
+                                            <td>RM 21.30</td>
+                                            <td>Transfer</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Abu 0192988046</td>
+                                            <td>RM 21.30</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-3">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 fw-bold">Tomorrow's Order</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive table mt-2" id="dataTable-3" role="grid" aria-describedby="dataTable_info">
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Ahmad 0193490256</td>
+                                            <td>RM 55.20</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Karim 0192988046</td>
+                                            <td>RM 21.30</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Suparman 0192988046</td>
+                                            <td>RM 21.30</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 fw-bold">All Order</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Ahmad 0193490256</td>
+                                            <td>RM 55.20</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Karim 0192988046</td>
+                                            <td>RM 21.30</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a class="btn btn-warning btn-circle" role="button"><i class="fas fa-exclamation-triangle text-white"></i></a></td>
+                                            <td>Suparman 0192988046</td>
+                                            <td>RM 21.30</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © Shimbab Sales 2021</span></div>
+                </div>
+            </footer>
+        </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
+
+</html>
