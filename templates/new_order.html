@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% set active_page = "New Order" %}
+
+{% block title %}
+New Order
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" style="padding-right: 5px;padding-left: 5px;">
+    <h3 class="text-dark mb-4">New Order</h3>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Order #</p>
+        </div>
+        <div class="card-body">
+            <form autocomplete="off" method="POST" action="/new_order/add_order">
+                {% include 'flash.html' %}
+                <div class="row">
+                    <div class="col">
+                        <input id="customer_id" name="customer_id" type="hidden" value="">
+                        <div class="mb-3" class="autocomplete"><label class="form-label" for="username"><strong>Customer :</strong></label><input id="customer_name" class="form-control" type="search" required></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Order Date &amp; Time :</strong></label><input name="order_date"  class="form-control" type="datetime-local" required></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Delivery Address :</strong></label><textarea name="order_delivery_location" class="form-control" placeholder="Self Pickup"></textarea></div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col"><a data-bs-toggle="modal" data-bs-target="#modal-1" class="btn btn-primary" role="button" href="new_order-1.html">Add Item</a></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                            <table class="table my-0" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Item</th>
+                                        <th>Amount</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table_item_list" onchange="calculate_total()">
+                                    <!--    
+                                    <tr>
+                                        <td class="text-center"><i class="fa fa-remove"></i></td>
+                                        <td>Karipap</td>
+                                        <td><input class="form-control" type="number" min="0" value="1"></td>
+                                        <td>RM 25.00</td>
+                                    </tr>                                    
+                                    -->
+                                    <tr>
+                                        <td class="text-center">-</td>
+                                        <td>Delivery Charge</td>
+                                        <td class="text-center">-</td>
+                                        <td>
+                                            <div class="input-group"><span class="input-group-text" style="padding-right: 1px;padding-left: 1px;">RM</span><input name="delivery_charge" class="form-control" type="number" inputmode="decimal" step="0.01" value=0></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>                                    
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td><strong></strong></td>
+                                        <td><strong>RM <strong id="total_order_price">0</strong></strong><input type="hidden" id="total_price_field" name="total_order_price" value=0></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mb-3"><button class="btn btn-primary" type="submit">Save Order</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div role="dialog" tabindex="-1" class="modal fade" id="modal-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Item</h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in all_stocks %}
+                            <tr>
+                                <td><button data-bs-dismiss="modal" class="btn btn-primary" type="button" name="btn-{{stock.StockID}}" onclick='update_item_table(this)'>{{stock.StockName}}</button></td>
+                                <td>RM {{stock.StockPrice}}</td>
+                                <td>{{stock.StockAmount}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Close</button></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function autocomplete(inp, arr, hddn, cust_id) {
+    /*the autocomplete function takes two arguments,
+    the text field element and an array of possible autocompleted values:*/
+    var currentFocus;
+    /*execute a function when someone writes in the text field:*/
+    inp.addEventListener("input", function(e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false;}
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "form-control autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+            /*check if the item starts with the same letters as the text field value:*/            
+            if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            b.innerHTML = boldString(arr[i].toLowerCase(), val.toLowerCase())
+            //b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            //b.innerHTML += arr[i].substr(val.length);
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' name='" + cust_id[i] + "' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+                b.addEventListener("click", function(e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = this.getElementsByTagName("input")[0].value;
+                hddn.value = this.getElementsByTagName("input")[0].getAttribute('name');
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
+            }
+        }
+    });
+    /*execute a function presses a key on the keyboard:*/
+    inp.addEventListener("keydown", function(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+            }
+        }
+    });
+
+    function boldString(str, substr) {
+       var strRegExp = new RegExp(substr, 'g');
+        return str.replace(strRegExp, '<b>'+substr+'</b>');
+    }
+    
+    function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+        x[i].classList.remove("autocomplete-active");
+        }
+    }
+    function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+        if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+        }
+    }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+    }
+</script>
+<script>
+    var customers = [{% for customer in all_customer %}'{{customer.name}} - {{customer.phone}}',{% endfor %} ];
+    var customer_id = [{% for customer in all_customer %}'{{customer.id}}',{% endfor %} ];
+
+    autocomplete(document.getElementById("customer_name"), customers, document.getElementById("customer_id"), customer_id);
+</script>
+<script>
+    var final_stock_list = [];
+
+    {% for stock in all_stocks %}
+        
+        var dict = {
+            "stock_id": "{{stock.StockID}}",
+            "stock_name": "{{stock.StockName}}",
+            "stock_price": "{{stock.StockPrice}}",
+            "stock_amount": "{{stock.StockAmount}}"
+        };
+
+        final_stock_list.push(dict)
+
+    {% endfor %}
+
+    function calculate_total(){
+        var stock_list = final_stock_list; 
+        var total_price = 0;            
+
+        var item_table_body = document.getElementById('table_item_list');
+
+        for (let i = 0; i < item_table_body.children.length ; i++) {               
+            if (item_table_body.children[i].children[1].innerHTML == "Delivery Charge"){                               
+                total_price = total_price + parseFloat(item_table_body.children[i].children[3].children[0].children[1].value);
+            }
+            else {             
+                var amount = item_table_body.children[i].children[2].children[0].value;
+                var price = 0;
+
+                for (let j = 0; j < stock_list.length ; j++) {                    
+                    if (stock_list[j].stock_name == item_table_body.children[i].children[1].innerHTML){
+                        price = stock_list[j].stock_price;
+                    }
+                }
+                item_table_body.children[i].children[3].innerHTML = item_table_body.children[i].children[3].innerHTML.replace(item_table_body.children[i].children[3].innerHTML.substr(3,item_table_body.children[i].children[3].innerHTML.length), price*amount)                
+                
+                total_price = total_price + parseFloat(item_table_body.children[i].children[3].innerHTML.substr(3,item_table_body.children[i].children[3].innerHTML.length));
+            }
+        }
+
+        document.getElementById("total_order_price").innerHTML = total_price;
+        document.getElementById("total_price_field").value = total_price;
+    }
+
+    function is_item_in_table(stock_name){
+        var result = false;
+
+        var item_table_body = document.getElementById('table_item_list');
+        
+        for (let i = 0; i < item_table_body.children.length ; i++) {             
+            if (item_table_body.children[i].children[1].innerHTML == stock_name){
+                result = true;
+            }
+        }
+        
+        return result;
+    }
+
+    function update_item_table(caller){
+        var stock_list = [];
+        var current_stock;
+
+
+        {% for stock in all_stocks %}
+        
+        var dict = {
+            "stock_id": "{{stock.StockID}}",
+            "stock_name": "{{stock.StockName}}",
+            "stock_price": "{{stock.StockPrice}}",
+            "stock_amount": "{{stock.StockAmount}}"
+        };
+
+        stock_list.push(dict)
+
+        {% endfor %}
+
+        for (let i = 0; i < stock_list.length ; i++) {            
+            if (stock_list[i].stock_id == caller.getAttribute('name').substr(4,(caller.getAttribute('name').length)-4)){
+                current_stock = stock_list[i]
+            }
+        }       
+
+        var table_item_list = document.getElementById('table_item_list');
+        
+                    
+        if (is_item_in_table(current_stock.stock_name) == false){
+            var row = table_item_list.insertRow(0);
+            
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);    
+
+            cell1.innerHTML = '<a onclick="remove_column(this)"><i class="fa fa-remove"></i></a>';
+            cell1.setAttribute("class", "text-center")
+
+            cell2.innerHTML = current_stock.stock_name;
+            cell3.innerHTML = '<td><input name="amount" class="form-control" type="number" min="0" value="1" pattern="\\d*"></td><input type="hidden" name="stock_id" value="'+ current_stock.stock_id +'">';
+            cell4.innerHTML = "RM " + current_stock.stock_price;
+            calculate_total();
+        }
+    }    
+
+    function remove_column(caller){
+        var item_table_body = caller.parentNode.parentNode;
+        var item_name = item_table_body.children[1].innerHTML;
+        
+        item_table_body = item_table_body.parentNode;                
+
+        for (let i = 0; i < item_table_body.children.length ; i++) {             
+            if (item_table_body.children[i].children[1].innerHTML == item_name){
+                item_table_body.deleteRow(i);
+                calculate_total();
+            }
+        }
+    }
+    
+</script>
+{% endblock %}

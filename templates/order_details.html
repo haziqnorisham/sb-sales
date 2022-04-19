@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% set active_page = "Order Details" %}
+
+{% block title %}
+Order Details
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid" style="padding-right: 5px;padding-left: 5px;">
+    <h3 class="text-dark mb-4">Order Details</h3>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Order Status</p>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="/order_details/update_order_status">
+                <input type="hidden" name="order_id" value="{{order_details.order_id}}">
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="username"><strong>Set Status : </strong></label><select name="order_status" class="form-select">
+                                <option value="1" selected>Completed</option>
+                                <option value="0">Ongoing</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Payment Type : </strong></label><select name="payment_type" class="form-select">
+                                <option value="0" selected>Cash</option>
+                                <option value="1">Transfer</option>
+                            </select></div>
+                    </div>
+                </div>
+                <div class="text-end mb-3"><button class="btn btn-primary" type="submit">Update Order Status</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="card shadow mb-3">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">Order #</p>
+        </div>
+        <div class="card-body">
+            {% include 'flash.html' %}
+            <form autocomplete="off" method="POST" action="/order_details/update_order_details">
+                <div class="row">
+                    <div class="col">
+                        <input type="hidden" name="order_id" value="{{order_details.order_id}}">
+                        <input id="customer_id" name="customer_id" type="hidden" value="">
+                        <div class="mb-3" class="autocomplete"><label class="form-label" for="username"><strong>Customer :</strong></label><input id="customer_name" class="form-control text-dark" type="search" value="{{order_details.customer_name}} | {{order_details.customer_phone}}" disabled></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Order Date &amp; Time :</strong></label><input name="order_date"  class="form-control text-dark" type="text" value="{{order_details.order_datetime}}"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Delivery Address :</strong></label><textarea name="order_delivery_location" class="form-control text-dark" placeholder="Self Pickup" value="{{order_details.delivery_address}}">{{order_details.delivery_address}}</textarea></div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col"><a data-bs-toggle="modal" data-bs-target="#modal-1" class="btn btn-primary" role="button" href="new_order-1.html">Add Item</a></div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                            <table class="table my-0" id="dataTable" onchange="calculate_total()">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Item</th>
+                                        <th>Amount</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table_item_list">
+                                    {% for stock in ordered_item %}
+                                    <tr>
+                                        <td class="text-center"><a onclick="remove_column(this)"><i class="fa fa-remove"></i></a></td>
+                                        <td>{{stock.stock_name}}</td>
+                                        <td class="text-center" ><input name="amount" class="form-control" type="number" min="0" value="{{stock.stock_amount}}" pattern="\d*"><input type="hidden" name="stock_id" value="{{stock.stock_id}}"></td>
+                                        <td>RM {{stock.stock_amount * stock.stock_price}}</td>
+                                    </tr>   
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="text-cneter" >-</td>
+                                        <td>Delivery Charge</td>
+                                        <td class="text-center">-</td>
+                                        <td>
+                                            <div class="input-group"><span class="input-group-text" style="padding-right: 1px;padding-left: 1px;">RM</span><input name="delivery_charge" class="form-control" type="number" inputmode="decimal" step="0.01" value={{order_details.delivery_charge}} ></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>                                    
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td><strong></strong></td>
+                                        <td><strong>RM <strong id="total_order_price">{{order_details.total_amount}}</strong></strong><input type="hidden" id="total_price_field" name="total_order_price" value="{{order_details.total_amount}}"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mb-3"><button class="btn btn-primary" type="submit" name="button" value="update">Update Order</button></div>
+                <div class="text-start mb-3"><button class="btn btn-danger" type="submit" name="button" value="delete">Delete Order</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div role="dialog" tabindex="-1" class="modal fade" id="modal-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Item</h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in all_stocks %}
+                            <tr>
+                                <td><button data-bs-dismiss="modal" class="btn btn-primary" type="button" name="btn-{{stock.StockID}}" onclick='update_item_table(this)'>{{stock.StockName}}</button></td>
+                                <td>RM {{stock.StockPrice}}</td>
+                                <td>{{stock.StockAmount}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Close</button></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    var final_stock_list = [];
+
+    {% for stock in all_stocks %}
+        
+        var dict = {
+            "stock_id": "{{stock.StockID}}",
+            "stock_name": "{{stock.StockName}}",
+            "stock_price": "{{stock.StockPrice}}",
+            "stock_amount": "{{stock.StockAmount}}"
+        };
+
+        final_stock_list.push(dict)
+
+    {% endfor %}
+
+    function calculate_total(){
+        var stock_list = final_stock_list; 
+        var total_price = 0;            
+
+        var item_table_body = document.getElementById('table_item_list');
+
+        for (let i = 0; i < item_table_body.children.length ; i++) {               
+            if (item_table_body.children[i].children[1].innerHTML == "Delivery Charge"){                               
+                total_price = total_price + parseFloat(item_table_body.children[i].children[3].children[0].children[1].value);
+            }
+            else {             
+                var amount = item_table_body.children[i].children[2].children[0].value;
+                var price = 0;
+
+                for (let j = 0; j < stock_list.length ; j++) {                    
+                    if (stock_list[j].stock_name == item_table_body.children[i].children[1].innerHTML){
+                        price = stock_list[j].stock_price;
+                    }
+                }
+                item_table_body.children[i].children[3].innerHTML = item_table_body.children[i].children[3].innerHTML.replace(item_table_body.children[i].children[3].innerHTML.substr(3,item_table_body.children[i].children[3].innerHTML.length), price*amount)                
+                
+                total_price = total_price + parseFloat(item_table_body.children[i].children[3].innerHTML.substr(3,item_table_body.children[i].children[3].innerHTML.length));
+            }
+        }
+
+        document.getElementById("total_order_price").innerHTML = total_price;
+        document.getElementById("total_price_field").value = total_price;
+    }
+
+    function is_item_in_table(stock_name){
+        var result = false;
+
+        var item_table_body = document.getElementById('table_item_list');
+        
+        for (let i = 0; i < item_table_body.children.length ; i++) {             
+            if (item_table_body.children[i].children[1].innerHTML == stock_name){
+                result = true;
+            }
+        }
+        
+        return result;
+    }
+
+    function update_item_table(caller){
+        var stock_list = [];
+        var current_stock;
+
+
+        {% for stock in all_stocks %}
+        
+        var dict = {
+            "stock_id": "{{stock.StockID}}",
+            "stock_name": "{{stock.StockName}}",
+            "stock_price": "{{stock.StockPrice}}",
+            "stock_amount": "{{stock.StockAmount}}"
+        };
+
+        stock_list.push(dict)
+
+        {% endfor %}
+
+        for (let i = 0; i < stock_list.length ; i++) {            
+            if (stock_list[i].stock_id == caller.getAttribute('name').substr(4,(caller.getAttribute('name').length)-4)){
+                current_stock = stock_list[i]
+            }
+        }       
+
+        var table_item_list = document.getElementById('table_item_list');
+        
+                    
+        if (is_item_in_table(current_stock.stock_name) == false){
+            var row = table_item_list.insertRow(0);
+            
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);    
+
+            cell1.innerHTML = '<a onclick="remove_column(this)"><i class="fa fa-remove"></i></a>';
+            cell1.setAttribute("class", "text-center")
+
+            cell2.innerHTML = current_stock.stock_name;
+            cell3.innerHTML = '<td><input name="amount" class="form-control" type="number" min="0" value="1" pattern="\\d*"></td><input type="hidden" name="stock_id" value="'+ current_stock.stock_id +'">';
+            cell4.innerHTML = "RM " + current_stock.stock_price;
+            calculate_total();
+        }
+    } 
+
+    function remove_column(caller){
+        var item_table_body = caller.parentNode.parentNode;
+        var item_name = item_table_body.children[1].innerHTML;
+        
+        item_table_body = item_table_body.parentNode;                
+
+        for (let i = 0; i < item_table_body.children.length ; i++) {             
+            if (item_table_body.children[i].children[1].innerHTML == item_name){
+                item_table_body.deleteRow(i);
+                calculate_total();
+            }
+        }
+    }
+</script>
+{% endblock %}
