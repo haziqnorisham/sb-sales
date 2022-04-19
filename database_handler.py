@@ -1,8 +1,10 @@
 import os
 import sqlite3
 
+import config_handler
+
 print(os.getcwd())
-conn = sqlite3.connect(os.getcwd()+"/flask_app/db.db", check_same_thread=False)
+conn = sqlite3.connect(os.getcwd()+config_handler.get_sqlite_path(), check_same_thread=False)
 c = conn.cursor()
 c.execute("PRAGMA foreign_keys = ON", ())   
 
