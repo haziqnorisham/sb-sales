@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, datetime
+import pytz
 
 from flask import Flask, render_template, request, flash
 from werkzeug.utils import redirect
@@ -129,6 +130,8 @@ def summary():
         from_date = request.args['from_date']
         to_date = request.args['to_date']
     except Exception as e:
+        timezone = pytz.timezone("Asia/Kuala_Lumpur")        
+        today = timezone.localize(datetime.today()).date()
         today = date.today()
         from_date = today
         to_date = today    

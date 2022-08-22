@@ -41,7 +41,7 @@ def get_all_stock():
     
     stock_list = []
     
-    for row in c.execute('SELECT Stock.StockID , Stock.StockName, Stock.StockPrice, Stock.StockAmount FROM Stock'):
+    for row in c.execute('SELECT Stock.StockID , Stock.StockName, Stock.StockPrice, Stock.StockAmount FROM Stock WHERE StockName NOT LIKE \'<DELETED>%\''):
         stock_list.append( {'StockID': row[0], 'StockName': row[1], 'StockPrice': row[2], 'StockAmount': row[3]} )
     
     return stock_list
@@ -60,7 +60,7 @@ def edit_stock(stock_id, stock_name, stock_price, stock_amount):
     return None
 
 def delete_stock(stock_id):
-    stmt = 'DELETE FROM Stock where StockID = ?'
+    stmt = 'UPDATE Stock SET StockName = \'<DELETED> \' || StockName WHERE StockID = ?'
     c.execute(stmt, (stock_id,))
 
     conn.commit()
